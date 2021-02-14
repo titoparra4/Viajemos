@@ -179,25 +179,26 @@ namespace Viajemos.Web.Controllers
             }
 
             var autor = await _dataContext.Autors
+                .Include(o => o.User)
+                .Include(o => o.Libros)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (autor == null)
             {
                 return NotFound();
             }
 
-            return View(autor);
-        }
+            if(autor.Libros.Count != 0)
+            {
+                ModelState.AddModelError(string.Empty, "El autor no se puede borra porque tiene libros");
+                return RedirectToAction(nameof(Index));
+            }
 
-        // POST: Autors/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var autor = await _dataContext.Autors.FindAsync(id);
             _dataContext.Autors.Remove(autor);
             await _dataContext.SaveChangesAsync();
+            await _userHelper.DeleteUserAsync(autor.User.Email);
             return RedirectToAction(nameof(Index));
         }
+
 
         private bool AutorExists(int id)
         {
