@@ -236,5 +236,39 @@ namespace Viajemos.Web.Controllers
 
             return View(model);
         }
+
+        public async Task<IActionResult> EditLibro(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var libro = await _dataContext.Libros
+                .Include(l => l.Autor)
+                .Include(l => l.Editorial)
+                .FirstOrDefaultAsync(l => l.Id == id);
+            if (libro == null)
+            {
+                return NotFound();
+            }
+
+            var model = _coverterHelper.ToLibroViewModel(libro);
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditLibro(LibroViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var libro = await _coverterHelper.ToLibroAsync(model, false);
+                _dataContext.Libros.Update(libro);
+                await _dataContext.SaveChangesAsync();
+                return RedirectToAction($"Details/{model.AutorId}");
+            }
+
+            return View(model);
+        }
     }
 }
