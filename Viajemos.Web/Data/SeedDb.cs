@@ -24,7 +24,7 @@ namespace MyLeasing.Web.Data
         {
             await _dataContext.Database.EnsureCreatedAsync();
             await CheckRoles();
-            var manager = await CheckUserAsync("Tito", "Parra", "tito.parra4@hotmail.com.com", "320 6372606", "Manager");
+            var manager = await CheckUserAsync("Tito", "Parra", "tito.parra4@hotmail.com", "320 6372606", "Manager");
             var autor = await CheckUserAsync("Bill", "Gates", "bill@yopmail.com", "320 5555555", "Autor");
             await CheckEditorialsAsync();
             await CheckManagerAsync(manager);

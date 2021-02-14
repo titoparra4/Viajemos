@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Viajemos.Web.Data.Entities;
-
+using Viajemos.Web.Models;
 
 namespace Viajemos.Web.Helpers
 {
@@ -16,6 +16,11 @@ namespace Viajemos.Web.Helpers
         Task AddUserToRoleAsync(User user, string roleName);
 
         Task<bool> IsUserInRoleAsync(User user, string roleName);
+
+        Task<SignInResult> LoginAsync(LoginViewModel model);
+
+        Task LogoutAsync();
+
 
     }
 }
