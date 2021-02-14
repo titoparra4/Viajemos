@@ -342,5 +342,26 @@ namespace Viajemos.Web.Controllers
             return View(model);
         }
 
+        public async Task<IActionResult> DeleteImage(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var imagenLibro = await _dataContext.ImagenLibros
+                .Include(pi => pi.Libro)
+                .FirstOrDefaultAsync(pi => pi.Id == id.Value);
+            if (imagenLibro == null)
+            {
+                return NotFound();
+            }
+
+            _dataContext.ImagenLibros.Remove(imagenLibro);
+            await _dataContext.SaveChangesAsync();
+            return RedirectToAction($"{nameof(DetailsLibro)}/{imagenLibro.Libro.Id}");
+        }
+
+
     }
 }
