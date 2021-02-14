@@ -20,16 +20,19 @@ namespace Viajemos.Web.Controllers
         private readonly IUserHelper _userHelper;
         private readonly ICombosHelper _combosHelper;
         private readonly ICoverterHelper _coverterHelper;
+        private readonly IImageHelper _imageHelper;
 
         public AutorsController(DataContext dataContext,
             IUserHelper userHelper,
             ICombosHelper combosHelper,
-            ICoverterHelper coverterHelper)
+            ICoverterHelper coverterHelper,
+            IImageHelper imageHelper)
         {
             _dataContext = dataContext;
             _userHelper = userHelper;
             _combosHelper = combosHelper;
             _coverterHelper = coverterHelper;
+            _imageHelper = imageHelper;
         }
 
         // GET: Autors
@@ -270,5 +273,74 @@ namespace Viajemos.Web.Controllers
 
             return View(model);
         }
+
+        public async Task<IActionResult> DetailsLibro(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var libro = await _dataContext.Libros
+                .Include(o => o.Autor)
+                .ThenInclude(o => o.User)
+                .Include(o => o.Editorial)
+                .Include(p => p.ImagenLibros)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (libro == null)
+            {
+                return NotFound();
+            }
+
+            return View(libro);
+        }
+
+        public async Task<IActionResult> AddImage(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var libro = await _dataContext.Libros.FindAsync(id.Value);
+            if (libro == null)
+            {
+                return NotFound();
+            }
+
+            var model = new LibroImageViewModel
+            {
+                Id = libro.Id
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddImage(LibroImageViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var path = string.Empty;
+
+                if (model.ImageFile != null)
+                {
+                    path = await _imageHelper.UploadImageAsync(model.ImageFile);
+                }
+
+                var imagenLibro = new ImagenLibro
+                {
+                    ImageUrl = path,
+                    Libro = await _dataContext.Libros.FindAsync(model.Id)
+                };
+
+                _dataContext.ImagenLibros.Add(imagenLibro);
+                await _dataContext.SaveChangesAsync();
+                return RedirectToAction($"{nameof(DetailsLibro)}/{model.Id}");
+            }
+
+            return View(model);
+        }
+
     }
 }

@@ -11,13 +11,14 @@ namespace Viajemos.Web.Data.Entities
         public int Id { get; set; }
 
         [Display(Name = "Imagen")]
-        [Required(ErrorMessage = "El campo {0} es obligatorio.")]
         public string ImageUrl { get; set; }
 
         public Libro Libro  { get; set; }
 
         // TODO: Change the path when publish
-        public string ImageFullPath => $"https://viajemos.azurewebsites.net{ImageUrl.Substring(1)}";
+        public string ImageFullPath => string.IsNullOrEmpty(ImageUrl) 
+            ? null 
+            : $"https://viajemos.azurewebsites.net{ImageUrl.Substring(1)}";
 
     }
 }
