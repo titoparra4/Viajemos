@@ -361,6 +361,27 @@ namespace Viajemos.Web.Controllers
             return RedirectToAction($"{nameof(DetailsLibro)}/{imagenLibro.Libro.Id}");
         }
 
+        public async Task<IActionResult> DeleteLibro(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var libro = await _dataContext.Libros
+                .Include(p => p.Autor)
+                .Include(p => p.ImagenLibros)
+                .FirstOrDefaultAsync(pi => pi.Id == id.Value);
+            if (libro == null)
+            {
+                return NotFound();
+            }
+
+            _dataContext.ImagenLibros.RemoveRange(libro.ImagenLibros);
+            _dataContext.Libros.Remove(libro);
+            await _dataContext.SaveChangesAsync();
+            return RedirectToAction($"{nameof(Details)}/{libro.Autor.Id}");
+        }
 
     }
 }
