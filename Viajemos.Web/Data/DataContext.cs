@@ -13,5 +13,12 @@ namespace Viajemos.Web.Data
         {
         }
         public DbSet<Autor> Autors { get; set; }
+
+        public DbSet<Editorial> Editorials { get; set; }
+
+        public DbSet<ImagenLibro> ImagenLibros { get; set; }
+
+        public DbSet<Libro> Libros { get; set; }
+
     }
 }
