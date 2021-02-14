@@ -125,25 +125,23 @@ namespace Viajemos.Web.Controllers
             }
 
             var editorial = await _context.Editorials
+                .Include(e => e.Libros)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (editorial == null)
             {
                 return NotFound();
             }
 
-            return View(editorial);
-        }
+            if(editorial.Libros.Count > 0)
+            {
+                return RedirectToAction(nameof(Index));
+            }
 
-        // POST: Editorials/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var editorial = await _context.Editorials.FindAsync(id);
             _context.Editorials.Remove(editorial);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
 
         private bool EditorialExists(int id)
         {

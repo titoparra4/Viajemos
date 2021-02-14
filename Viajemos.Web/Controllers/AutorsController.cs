@@ -236,6 +236,7 @@ namespace Viajemos.Web.Controllers
                 return RedirectToAction($"Details/{model.AutorId}");
             }
 
+            model.Editorials = _combosHelper.GetComboEditorials();
             return View(model);
         }
 
