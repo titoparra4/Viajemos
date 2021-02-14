@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Viajemos.Web.Data;
 using Viajemos.Web.Data.Entities;
+using Viajemos.Web.Helpers;
+using Viajemos.Web.Models;
 
 namespace Viajemos.Web.Controllers
 {
@@ -15,10 +17,13 @@ namespace Viajemos.Web.Controllers
     public class AutorsController : Controller
     {
         private readonly DataContext _dataContext;
+        private readonly IUserHelper _userHelper;
 
-        public AutorsController(DataContext dataContext)
+        public AutorsController(DataContext dataContext,
+            IUserHelper userHelper)
         {
             _dataContext = dataContext;
+            _userHelper = userHelper;
         }
 
         // GET: Autors
@@ -61,15 +66,48 @@ namespace Viajemos.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id")] Autor autor)
+        public async Task<IActionResult> Create(AddUserViewModel model)
         {
             if (ModelState.IsValid)
             {
-                _dataContext.Add(autor);
-                await _dataContext.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                var user = await CreateUserAsync(model);
+                if(user != null)
+                {
+                    var autor = new Autor
+                    {
+                        Libros = new List<Libro>(),
+                        User = user
+                    };
+
+                    _dataContext.Autors.Add(autor);
+                    await _dataContext.SaveChangesAsync();
+                    return RedirectToAction("Index");
+                }
+
+                ModelState.AddModelError(string.Empty, "El Autor con este email ya existe");
             }
-            return View(autor);
+            return View(model);
+        }
+
+        private async Task<User> CreateUserAsync(AddUserViewModel model)
+        {
+            var user = new User
+            { 
+                Nombre = model.Nombre,
+                Email = model.Username,
+                Apellido = model.Apellido,
+                PhoneNumber = model.PhoneNumber,
+                UserName = model.Username
+            };
+
+            var result = await _userHelper.AddUserAsync(user, model.Password);
+            if (result.Succeeded)
+            {
+                user = await _userHelper.GetUserByEmailAsync(model.Username);
+                await _userHelper.AddUserToRoleAsync(user, "Autor");
+                return user;
+            }
+            return null;
         }
 
         // GET: Autors/Edit/5
