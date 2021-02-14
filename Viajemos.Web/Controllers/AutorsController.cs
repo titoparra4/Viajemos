@@ -54,7 +54,7 @@ namespace Viajemos.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nombre,Apellido")] Autor autor)
+        public async Task<IActionResult> Create([Bind("Id")] Autor autor)
         {
             if (ModelState.IsValid)
             {
@@ -86,7 +86,7 @@ namespace Viajemos.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre,Apellido")] Autor autor)
+        public async Task<IActionResult> Edit(int id, [Bind("Id")] Autor autor)
         {
             if (id != autor.Id)
             {
