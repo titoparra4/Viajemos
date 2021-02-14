@@ -80,6 +80,10 @@ namespace Viajemos.Web.Helpers
             return response.Succeeded;
         }
 
+        public async Task<IdentityResult> UpdateUserAsync(User user)
+        {
+            return await _userManager.UpdateAsync(user);
+        }
 
     }
 

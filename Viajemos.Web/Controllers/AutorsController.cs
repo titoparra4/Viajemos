@@ -127,48 +127,46 @@ namespace Viajemos.Web.Controllers
                 return NotFound();
             }
 
-            var autor = await _dataContext.Autors.FindAsync(id);
+            var autor = await _dataContext.Autors
+                .Include(o => o.User)
+                .FirstOrDefaultAsync(o => o.Id == id.Value);
             if (autor == null)
             {
                 return NotFound();
             }
-            return View(autor);
+
+            var model = new EditUserViewModel
+            {
+                Nombre = autor.User.Nombre,
+                Id = autor.Id,
+                Apellido = autor.User.Apellido,
+                PhoneNumber = autor.User.PhoneNumber
+            };
+
+            return View(model);
         }
 
-        // POST: Autors/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id")] Autor autor)
+        public async Task<IActionResult> Edit(EditUserViewModel view)
         {
-            if (id != autor.Id)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _dataContext.Update(autor);
-                    await _dataContext.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!AutorExists(autor.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                var autor = await _dataContext.Autors
+                    .Include(o => o.User)
+                    .FirstOrDefaultAsync(o => o.Id == view.Id);
+
+                autor.User.Nombre = view.Nombre;
+                autor.User.Apellido = view.Apellido;
+                autor.User.PhoneNumber = view.PhoneNumber;
+
+                await _userHelper.UpdateUserAsync(autor.User);
                 return RedirectToAction(nameof(Index));
             }
-            return View(autor);
+
+            return View(view);
         }
+
 
         // GET: Autors/Delete/5
         public async Task<IActionResult> Delete(int? id)
