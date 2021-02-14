@@ -18,12 +18,18 @@ namespace Viajemos.Web.Controllers
     {
         private readonly DataContext _dataContext;
         private readonly IUserHelper _userHelper;
+        private readonly ICombosHelper _combosHelper;
+        private readonly ICoverterHelper _coverterHelper;
 
         public AutorsController(DataContext dataContext,
-            IUserHelper userHelper)
+            IUserHelper userHelper,
+            ICombosHelper combosHelper,
+            ICoverterHelper coverterHelper)
         {
             _dataContext = dataContext;
             _userHelper = userHelper;
+            _combosHelper = combosHelper;
+            _coverterHelper = coverterHelper;
         }
 
         // GET: Autors
@@ -193,6 +199,42 @@ namespace Viajemos.Web.Controllers
         private bool AutorExists(int id)
         {
             return _dataContext.Autors.Any(e => e.Id == id);
+        }
+
+        public async Task<IActionResult> AddLibro(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var autor = await _dataContext.Autors.FindAsync(id);
+            if (autor == null)
+            {
+                return NotFound();
+            }
+
+            var model = new LibroViewModel
+            {
+                AutorId = autor.Id,
+                Editorials = _combosHelper.GetComboEditorials()
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddLibro(LibroViewModel model)
+        {
+            if(ModelState.IsValid)
+            {
+                var libro = await _coverterHelper.ToLibroAsync(model, true);
+                _dataContext.Libros.Add(libro);
+                await _dataContext.SaveChangesAsync();
+                return RedirectToAction($"Details/{model.AutorId}");
+            }
+
+            return View(model);
         }
     }
 }
