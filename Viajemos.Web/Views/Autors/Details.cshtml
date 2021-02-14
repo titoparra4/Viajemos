@@ -4,15 +4,84 @@
     ViewData["Title"] = "Details";
 }
 
-<h2>Details</h2>
+<h2>Autor</h2>
 
 <div>
-    <h4>Autor</h4>
+    <h4>Detalles</h4>
     <hr />
     <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.User.Nombre)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.User.Nombre)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.User.Apellido)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.User.Apellido)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.User.Email)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.User.Email)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.User.PhoneNumber)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.User.PhoneNumber)
+        </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
+    <a asp-action="AddLibro" asp-route-id="@Model.Id" class="btn btn-primary">Agregar Libro</a>
+    <a asp-action="Index" class="btn btn-success">Back to List</a>
 </div>
+@if (Model.Libros.Count == 0)
+{
+    <h5>No tiene libros agregados.</h5>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Libros.FirstOrDefault().Titulo)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Libros.FirstOrDefault().Sinopsis)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Libros.FirstOrDefault().Paginas)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Libros)
+            {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Titulo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Sinopsis)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Paginas)
+                </td>
+                <td>
+                    <a asp-action="EditLibro" asp-route-id="@item.Id" class="btn btn-warning">Edit</a>
+                    <a asp-action="DetailsLibro" asp-route-id="@item.Id" class="btn btn-info">Details</a>
+                    <a asp-action="DeleteLibro" asp-route-id="@item.Id"class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+}

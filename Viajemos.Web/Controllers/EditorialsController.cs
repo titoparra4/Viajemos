@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -11,25 +10,22 @@ using Viajemos.Web.Data.Entities;
 
 namespace Viajemos.Web.Controllers
 {
-    [Authorize(Roles = "Manager")]
-    public class AutorsController : Controller
+    public class EditorialsController : Controller
     {
-        private readonly DataContext _dataContext;
+        private readonly DataContext _context;
 
-        public AutorsController(DataContext dataContext)
+        public EditorialsController(DataContext context)
         {
-            _dataContext = dataContext;
+            _context = context;
         }
 
-        // GET: Autors
-        public IActionResult Index()
+        // GET: Editorials
+        public async Task<IActionResult> Index()
         {
-            return View(_dataContext.Autors
-                .Include(a => a.User)
-                .Include(a => a.Libros));
+            return View(await _context.Editorials.ToListAsync());
         }
 
-        // GET: Autors/Details/5
+        // GET: Editorials/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -37,42 +33,39 @@ namespace Viajemos.Web.Controllers
                 return NotFound();
             }
 
-            var autor = await _dataContext.Autors
-                .Include(a => a.User)
-                .Include(a => a.Libros)
-                .ThenInclude(a => a.ImagenLibros)
+            var editorial = await _context.Editorials
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (autor == null)
+            if (editorial == null)
             {
                 return NotFound();
             }
 
-            return View(autor);
+            return View(editorial);
         }
 
-        // GET: Autors/Create
+        // GET: Editorials/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Autors/Create
+        // POST: Editorials/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id")] Autor autor)
+        public async Task<IActionResult> Create([Bind("Id,Name,Sede")] Editorial editorial)
         {
             if (ModelState.IsValid)
             {
-                _dataContext.Add(autor);
-                await _dataContext.SaveChangesAsync();
+                _context.Add(editorial);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(autor);
+            return View(editorial);
         }
 
-        // GET: Autors/Edit/5
+        // GET: Editorials/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -80,22 +73,22 @@ namespace Viajemos.Web.Controllers
                 return NotFound();
             }
 
-            var autor = await _dataContext.Autors.FindAsync(id);
-            if (autor == null)
+            var editorial = await _context.Editorials.FindAsync(id);
+            if (editorial == null)
             {
                 return NotFound();
             }
-            return View(autor);
+            return View(editorial);
         }
 
-        // POST: Autors/Edit/5
+        // POST: Editorials/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id")] Autor autor)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Sede")] Editorial editorial)
         {
-            if (id != autor.Id)
+            if (id != editorial.Id)
             {
                 return NotFound();
             }
@@ -104,12 +97,12 @@ namespace Viajemos.Web.Controllers
             {
                 try
                 {
-                    _dataContext.Update(autor);
-                    await _dataContext.SaveChangesAsync();
+                    _context.Update(editorial);
+                    await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!AutorExists(autor.Id))
+                    if (!EditorialExists(editorial.Id))
                     {
                         return NotFound();
                     }
@@ -120,10 +113,10 @@ namespace Viajemos.Web.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(autor);
+            return View(editorial);
         }
 
-        // GET: Autors/Delete/5
+        // GET: Editorials/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -131,30 +124,30 @@ namespace Viajemos.Web.Controllers
                 return NotFound();
             }
 
-            var autor = await _dataContext.Autors
+            var editorial = await _context.Editorials
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (autor == null)
+            if (editorial == null)
             {
                 return NotFound();
             }
 
-            return View(autor);
+            return View(editorial);
         }
 
-        // POST: Autors/Delete/5
+        // POST: Editorials/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var autor = await _dataContext.Autors.FindAsync(id);
-            _dataContext.Autors.Remove(autor);
-            await _dataContext.SaveChangesAsync();
+            var editorial = await _context.Editorials.FindAsync(id);
+            _context.Editorials.Remove(editorial);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool AutorExists(int id)
+        private bool EditorialExists(int id)
         {
-            return _dataContext.Autors.Any(e => e.Id == id);
+            return _context.Editorials.Any(e => e.Id == id);
         }
     }
 }
