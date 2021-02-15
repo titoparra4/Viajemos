@@ -24,5 +24,7 @@ namespace Viajemos.Web.Helpers
         Task<bool> DeleteUserAsync(string email);
 
         Task<IdentityResult> UpdateUserAsync(User user);
+
+        Task<User> AddUser(AddUserViewModel view, string role);
     }
 }

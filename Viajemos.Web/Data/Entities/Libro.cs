@@ -26,6 +26,18 @@ namespace Viajemos.Web.Data.Entities
         public Autor Autor { get; set; }
 
         public ICollection<ImagenLibro> ImagenLibros { get; set; }
+        public string FirstImage
+        {
+            get
+            {
+                if (ImagenLibros == null || ImagenLibros.Count == 0)
+                {
+                    return "";
+                }
+
+                return ImagenLibros.FirstOrDefault().ImageUrl;
+            }
+        }
 
     }
 }

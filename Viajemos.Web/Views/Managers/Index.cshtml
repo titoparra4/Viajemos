@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Viajemos.Web.Data.Entities.Autor>
+﻿@model IEnumerable<Viajemos.Web.Data.Entities.Manager>
 
 @{
     ViewData["Title"] = "Index";
@@ -8,33 +8,30 @@
 <br />
 
 <p>
-    <a asp-action="Create" class="btn btn-primary"><i class="glyphicon glyphicon-plus"></i> Create Autor</a>
+    <a asp-action="Create" class="btn btn-primary"><i class="glyphicon glyphicon-plus"></i> Create New</a>
 </p>
 
 <div class="row">
     <div class="col-md-12">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">Autores</h3>
+                <h3 class="panel-title">Managers</h3>
             </div>
             <div class="panel-body">
                 <table class="table table-hover table-responsive table-striped" id="MyTable">
                     <thead>
                         <tr>
                             <th>
-                                @Html.DisplayNameFor(model => model.User.Nombre)
+                                @Html.DisplayNameFor(model => model.FirstOrDefault().User.Nombre)
                             </th>
                             <th>
-                                @Html.DisplayNameFor(model => model.User.Apellido)
+                                @Html.DisplayNameFor(model => model.FirstOrDefault().User.Apellido)
                             </th>
                             <th>
-                                @Html.DisplayNameFor(model => model.User.Email)
+                                @Html.DisplayNameFor(model => model.FirstOrDefault().User.Email)
                             </th>
                             <th>
-                                @Html.DisplayNameFor(model => model.User.PhoneNumber)
-                            </th>
-                            <th>
-                                No. Libros
+                                @Html.DisplayNameFor(model => model.FirstOrDefault().User.PhoneNumber)
                             </th>
                             <th></th>
                         </tr>
@@ -56,11 +53,8 @@
                                     @Html.DisplayFor(modelItem => item.User.PhoneNumber)
                                 </td>
                                 <td>
-                                    @Html.DisplayFor(modelItem => item.Libros.Count)
-                                </td>
-                                <td>
-                                    <a asp-action="Edit" class="btn btn-warning" asp-route-id="@item.Id"><i class="glyphicon glyphicon-pencil"></i> </a>
-                                    <a asp-action="Details" class="btn btn-info" asp-route-id="@item.Id"><i class="glyphicon glyphicon-list"> </i> </a>
+                                    <a asp-action="#" class="btn btn-default" asp-route-id="@item.Id"><i class="glyphicon glyphicon-pencil"></i> </a>
+                                    <a asp-action="#" class="btn btn-default" asp-route-id="@item.Id"><i class="glyphicon glyphicon-list"> </i> </a>
                                     <button data-id="@item.Id" class="btn btn-danger deleteItem" data-toggle="modal" data-target="#deleteDialog"><i class="glyphicon glyphicon-trash"></i></button>
                                 </td>
                             </tr>
@@ -72,7 +66,6 @@
     </div>
 </div>
 
-
 <partial name="_DeleteDialog" />
 
 @section Scripts {
@@ -80,18 +73,20 @@
     <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 
     <script type="text/javascript">
-        $(document).ready(function () {
-            $('#MyTable').DataTable();
-            // Delete item
-            var item_to_delete;
+    	$(document).ready(function () {
+        	$('#MyTable').DataTable();
 
-            $('.deleteItem').click((e) => {
-                item_to_delete = e.currentTarget.dataset.id;
-            });
+        	// Delete item
+        	var item_to_delete;
 
-            $("#btnYesDelete").click(function () {
-                window.location.href = '/Autors/Delete/' + item_to_delete;
-            });
-        });
+        	$('.deleteItem').click((e) => {
+            	item_to_delete = e.currentTarget.dataset.id;
+        	});
+
+        	$("#btnYesDelete").click(function () {
+            	window.location.href = '/Managers/Delete/' + item_to_delete;
+        	});
+    	});
     </script>
 }
+

@@ -85,6 +85,29 @@ namespace Viajemos.Web.Helpers
             return await _userManager.UpdateAsync(user);
         }
 
+        public async Task<User> AddUser(AddUserViewModel view, string role)
+        {
+            var user = new User
+            {
+                Email = view.Username,
+                Nombre = view.Nombre,
+                Apellido = view.Apellido,
+                PhoneNumber = view.PhoneNumber,
+                UserName = view.Username
+            };
+
+            var result = await AddUserAsync(user, view.Password);
+            if (result != IdentityResult.Success)
+            {
+                return null;
+            }
+
+            var newUser = await GetUserByEmailAsync(view.Username);
+            await AddUserToRoleAsync(newUser, role);
+            return newUser;
+        }
+
+
     }
 
 }

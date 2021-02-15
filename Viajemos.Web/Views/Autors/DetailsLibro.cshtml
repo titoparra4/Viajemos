@@ -4,11 +4,10 @@
     ViewData["Title"] = "Details";
 }
 
-<h2>Libro</h2>
+<h2>Autor Libro</h2>
 <div class="row">
     <div class="col-md-6">
         <div>
-            <h4>Autor</h4>
             <hr />
             <dl class="dl-horizontal">
                 <dt>
@@ -66,14 +65,14 @@
     </div>
 </div>
 <div>
-    <a asp-action="EditLibro" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
-    <a asp-action="AddImage" asp-route-id="@Model.Id" class="btn btn-primary">Add Image</a>
-    <a asp-action="Details" asp-route-id="@Model.Autor.Id" class="btn btn-success">Back to Autor</a>
+    <a asp-action="EditLibro" asp-route-id="@Model.Id" class="btn btn-warning">Editar</a>
+    <a asp-action="AddImage" asp-route-id="@Model.Id" class="btn btn-primary">Agregar Imagen</a>
+    <a asp-action="Details" asp-route-id="@Model.Autor.Id" class="btn btn-success">Regresar a Autor</a>
 </div>
+<br />
 <div class="row">
     <div class="col-md-3">
         <div>
-            <h4>Images</h4>
             @if (Model.ImagenLibros.Count == 0)
             {
                 <h5>No se ha agregado Imagen al libro</h5>
@@ -100,7 +99,7 @@
                                     }
                                 </td>
                                 <td>
-                                    <button data-id="@item.Id" class="btn btn-danger deleteImage" data-toggle="modal" data-target="#deleteDialog">Delete</button>
+                                    <button data-id="@item.Id" class="btn btn-danger deleteImage" data-toggle="modal" data-target="#deleteDialog">Eliminar</button>
                                 </td>
                             </tr>
                         }

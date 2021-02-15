@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Viajemos.Web.Data;
+using Viajemos.Web.Data.Entities;
 using Viajemos.Web.Helpers;
 using Viajemos.Web.Models;
 
@@ -11,10 +13,16 @@ namespace Viajemos.Web.Controllers
     public class AccountController : Controller
     {
         private readonly IUserHelper _userHelper;
+        private readonly ICombosHelper _combosHelper;
+        private readonly DataContext _dataContext;
 
-        public AccountController(IUserHelper userHelper)
+        public AccountController(IUserHelper userHelper,
+            ICombosHelper combosHelper,
+            DataContext dataContext)
         {
             _userHelper = userHelper;
+            _combosHelper = combosHelper;
+            _dataContext = dataContext;
         }
 
         public IActionResult Login()
@@ -53,6 +61,12 @@ namespace Viajemos.Web.Controllers
             await _userHelper.LogoutAsync();
             return RedirectToAction("Index", "Home");
         }
+
+        public IActionResult NotAuthorized()
+        {
+            return View();
+        }
+
     }
 
 }
