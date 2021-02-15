@@ -28,13 +28,5 @@ namespace Viajemos.Web.Models
         [Compare("Password")]
         public string PasswordConfirm { get; set; }
 
-        [Required(ErrorMessage = "El campo {0} es obligatorio.")]
-        [Display(Name = "Registrarse como")]
-        [Range(1, int.MaxValue, ErrorMessage = "Debes seleccionar un rol.")]
-        public int RoleId { get; set; }
-
-        public IEnumerable<SelectListItem> Roles { get; set; }
-
-
     }
 }
